@@ -1,0 +1,17 @@
+1. 解压PowerShellAccessControl.zip到(包含文件夹）C:\Program Files\WindowsPowerShell\Modules\
+2. 导入模块
+Import-Module PowerShellAccessControl
+Import-Module activedirectory
+set-location ad:
+
+3. 执行脚本
+
+$user = Get-ADUser -SearchBase "OU=microsoft,DC=waopco,DC=com" -Filter * 
+$Acl = Get-Acl $user
+$title = New-AccessControlEntry -Principal "Exchange Servers" -ActiveDirectoryRights ReadProperty -ObjectAceType title -AceType Accessdenied -AppliesTo Object
+$Department = New-AccessControlEntry -Principal "Exchange Servers" -ActiveDirectoryRights ReadProperty -ObjectAceType Department -AceType Accessdenied -AppliesTo Object
+$company = New-AccessControlEntry -Principal "Exchange Servers" -ActiveDirectoryRights ReadProperty -ObjectAceType company -AceType Accessdenied -AppliesTo Object
+$Acl | Add-AccessControlEntry -AceObject $title
+$Acl | Add-AccessControlEntry -AceObject $Department
+$Acl | Add-AccessControlEntry -AceObject $company
+$Acl | Set-Acl
